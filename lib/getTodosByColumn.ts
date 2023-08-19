@@ -23,5 +23,17 @@ export const getTodosByColumn = async () => {
     });
     return acc;
   }, new Map<TypeColumn, Column>());
-  console.log(columns);
+
+  const columnsTypes: TypeColumn[] = ['todo', 'inprogress', 'done'];
+
+  const sortedColumns = new Map<TypeColumn, Column>(
+    [...columns.entries()].sort(
+      (a, b) => columnsTypes.indexOf(a[0]) - columnsTypes.indexOf(b[0])
+    )
+  );
+
+  const board: BoardState = {
+    columns: sortedColumns
+  };
+  return board;
 };

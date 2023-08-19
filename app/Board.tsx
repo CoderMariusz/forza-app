@@ -2,30 +2,50 @@
 import { useBoardStore } from '@/store/BoardStore';
 import React, { useEffect } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import Column from './Column';
 
 function Board() {
-  const getBoard = useBoardStore((state) => state.getBoard);
+  const [board, getBoard] = useBoardStore((state) => [
+    state.board,
+    state.getBoard
+  ]);
   useEffect(() => {
     getBoard();
   }, [getBoard]);
 
+  const handleOnDragEnd = (result: any) => {};
+
   return (
-    <h1>heloo</h1>
-    // <DragDropContext>
-    //   <Droppable
-    //     droppableId='board'
-    //     direction='horizontal'
-    //     type='column'>
-    //     {(provided) => (
-    //       <div
-    //         className='flex space-x-5 p-5 overflow-x-auto'
-    //         {...provided.droppableProps}
-    //         ref={provided.innerRef}>
-    //         {provided.placeholder}
-    //       </div>
-    //     )}
-    //   </Droppable>
-    // </DragDropContext>
+    <DragDropContext onDragEnd={handleOnDragEnd}>
+      <Droppable
+        droppableId='board'
+        type='column'
+        direction='horizontal'>
+        {(provided) => (
+          <div
+            className='grid grid-cols-1 p-5 m-2 max-w-4xl mx-auto md:grid-cols-3'
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+            id='board'>
+            {Array.from(board.columns.entries()).map(
+              ([id, column]: any, index: number) => {
+                console.log(column.todos);
+
+                return (
+                  <Column
+                    id={id}
+                    key={id}
+                    todos={column.todos}
+                    index={index}
+                  />
+                );
+              }
+            )}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 }
 
